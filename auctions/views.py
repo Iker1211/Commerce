@@ -16,6 +16,29 @@ def createList(request):
         return render (request, "auctions/createList.html", {
             "categories": allCategories
         })
+    else:
+        title = request.POST["title"]
+        description = request.POST["description"]
+        imageUrl = request.POST["imageurl"]
+        price = request.POST["price"]
+        category_name = request.POST["category"]
+        userNow = request.user
+
+        categoryData = Category.objects.get(categoryName=category_name)
+        # Create a new list
+        newList = List(
+            title=title,
+            description=description,
+            imageUrl=imageUrl,
+            price=float(price),
+            category=categoryData,
+            owner=userNow
+            )
+
+        newList.save()
+
+        return HttpResponseRedirect(reverse("index"))
+
 
 
 def login_view(request):

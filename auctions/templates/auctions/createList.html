@@ -35,7 +35,7 @@
                             <div class="input-group">
                                 <select class="form-select" id="category" name="category">
                                     {% for category in categories %}
-                                    <option value="cat">{{ category }}</option>
+                                    <option value="{{ category.categoryName }}">{{ category.categoryName }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
