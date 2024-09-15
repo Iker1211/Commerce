@@ -4,11 +4,18 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Category, List
 
 
 def index(request):
     return render(request, "auctions/index.html")
+
+def createList(request):
+    if request.method == "GET":
+        allCategories = Category.objects.all()
+        return render (request, "auctions/createList.html", {
+            "categories": allCategories
+        })
 
 
 def login_view(request):

@@ -1,0 +1,52 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Create New Listing</h2>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'createList' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" name="title" class="form-control" id="title" name="Title" placeholder="Enter listing title">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <input type="text" name="description" class="form-control" id="description" name="Description" placeholder="Enter listing description">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="imageurl" class="form-label">Image URL</label>
+                            <input type="text" name="imageurl" class="form-control" id="imageUrl" name="Image URL" placeholder="Enter image URL">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" name="price" class="form-control" id="price" name="Price" placeholder="Enter starting price">
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="category" class="form-label">Select the category</label>
+                            <div class="input-group">
+                                <select class="form-select" id="category" name="category">
+                                    {% for category in categories %}
+                                    <option value="cat">{{ category }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Listing</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
