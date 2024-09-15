@@ -8,7 +8,10 @@ from .models import User, Category, List
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    activeListings = List.objects.filter(isActive=True)
+    return render(request, "auctions/index.html", {
+        "listings": activeListings
+    })
 
 def createList(request):
     if request.method == "GET":

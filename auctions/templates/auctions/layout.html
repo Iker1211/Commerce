@@ -6,7 +6,22 @@
         <title>{% block title %}Auctions{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
-
+        <style>
+            .card {
+              transition: transform 0.3s ease-in-out;
+            }
+            .card:hover {
+              transform: translateY(-5px);
+            }
+            .btn-primary {
+              background-color: #4a90e2;
+              border-color: #4a90e2;
+            }
+            .btn-primary:hover {
+              background-color: #3a7bc8;
+              border-color: #3a7bc8;
+            }
+          </style>
     </head>
     <body class="d-flex flex-column min-vh-100">
         <header class="bg-primary text-white py-4">

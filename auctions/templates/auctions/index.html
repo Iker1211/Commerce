@@ -3,5 +3,23 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    <div class="container mt-5">
+        <div class="row">
+            {% for listing in listings %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg border-0 h-100">
+                    <img src="{{ listing.imageUrl }}" class="card-img-top" alt="{{ listing.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3">{{ listing.title }}</h5>
+                        <p class="card-text text-muted mb-4">{{ listing.description }}</p>
+                        <a href="#" class="btn btn-primary w-100 rounded-pill">Explore More</a>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 text-end">
+                        <small class="text-muted">Last updated 3 mins ago</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
