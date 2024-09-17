@@ -15,6 +15,13 @@ def listing(request, id):
         "isListingInWatchlist": isListingInWatchlist
     })
 
+def watchlist(request):
+    currentUser = request.user
+    listings = currentUser.watchlist.all()
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings
+    })
+
 def removeWatchlist(request, id):
     listingData = List.objects.get(pk=id)
     currentUser = request.user
