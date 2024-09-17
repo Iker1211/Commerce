@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="row">
+    {% if user.is_authenticated %}
+        {% if isListingInWatchlist %}
+            <form action="{% url 'removeWatchlist' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <div class="container mt-2">
+                <button type="submit" class="btn btn-danger">Remove From WatchList</button>
+                </div>
+            </form>
+        {% else %}
+        <form action="{% url 'addWatchlist' id=listing.id %}" method="POST">
+          {% csrf_token %}
+        <div class="container mt-2">
+            <button class="btn btn-primary">Add To WatchList</button>
+        </div>
+        </form>
+        {% endif %}
+    {% endif %}
+</div>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ listing.imageUrl }}" alt="{{ listing.title }}" class="img-fluid rounded-start h-100 object-fit-cover">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h2 class="card-title mb-3">{{ listing.title }}</h2>
+            <p class="card-text">{{ listing.description }}</p>
+            <p class="card-text"><small class="text-muted">Owner: {{ listing.owner }}</small></p>
+            <h4 class="card-text text-primary mt-3">${{ listing.price }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
