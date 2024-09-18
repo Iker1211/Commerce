@@ -1,19 +1,77 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from .models import User, Category, List
+from .models import User, Category, List, Comment, Bid
 
 
 def listing(request, id):
     listingData = List.objects.get(pk=id)
     isListingInWatchlist = request.user in listingData.watchlist.all()
+    allComments = Comment.objects.filter(listing=listingData)
+    isOwner = request.user.username == listingData.owner.username
     return render(request, "auctions/listing.html", {
         "listing": listingData,
-        "isListingInWatchlist": isListingInWatchlist
+        "isListingInWatchlist": isListingInWatchlist,
+        "allComments": allComments,
+        "isOwner": isOwner
     })
+
+def closeAuction(request, id):
+    listingData = List.objects.get(pk=id)
+    listingData.isActive = False
+    listingData.save()
+    isOwner = request.user.username == listingData.owner.username
+    isListingInWatchlist = request.user in listingData.watchlist.all()
+    allComments = Comment.objects.filter(listing=listingData)
+    return render(request, "auctions/listing.html", {
+        "listing": listingData,
+        "isListingInWatchlist": isListingInWatchlist,
+        "allComments": allComments,
+        "isOwner": isOwner,
+        "update": True,
+        "message": "The auction has been closed"
+    })
+
+def addBid(request, id):
+    newBid = request.POST.get("newBid")
+    listingData = List.objects.get(pk=id)
+    isListingInWatchlist = request.user in listingData.watchlist.all()
+    allComments = Comment.objects.filter(listing=listingData)
+    isOwner = request.user.username == listingData.owner.username
+    if int(newBid) > listingData.price.bid:
+        updateBid = Bid(user=request.user, bid=int(newBid))
+        updateBid.save()
+        listingData.price = updateBid
+        listingData.save()
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Your bid has been placed",
+            "update": True,
+            "isOwner": isOwner,
+            "isListingInWatchlist": isListingInWatchlist,
+            "allComments": allComments
+        }) 
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Your bid must be higher than the current bid",
+            "update": False,
+            "isOwner": isOwner,
+            "isListingInWatchlist": isListingInWatchlist,
+            "allComments": allComments
+        }) 
+
+def addComment(request, id):
+    if request.method == "POST":
+        new_comment = request.POST.get("newComment")
+        listing = get_object_or_404(List, pk=id)
+        comment = Comment(user=request.user, listing=listing, comment=new_comment)
+        comment.save()
+        return HttpResponseRedirect(reverse("listing", args=(id,)))
+    
 
 def watchlist(request):
     currentUser = request.user
@@ -70,12 +128,15 @@ def createList(request):
         userNow = request.user
 
         categoryData = Category.objects.get(categoryName=category_name)
+        #Create a bid object
+        bid_instance = Bid.objects.create(bid=price, user=userNow)
+        bid_instance.save()
         # Create a new list
         newList = List(
             title=title,
             description=description,
             imageUrl=imageUrl,
-            price=float(price),
+            price=bid_instance,
             category=categoryData,
             owner=userNow
             )

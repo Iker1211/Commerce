@@ -1,8 +1,36 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+<div class="container">
+  {% if message %}
+      {% if update %}
+          <div class="alert alert-success" role="alert">
+              {{ message }}
+          </div>
+      {% else %}
+          <div class="alert alert-danger" role="alert">
+              {{ message }}
+          </div>
+      {% endif %}
+  {% endif %}
+</div>
+
+{% if not listing.isActive and user == listing.price.user %}
+<div class="alert alert-success" role="alert">
+  Congratulations! You won the Auction!
+</div>
+{% endif %}
+
 <div class="row">
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.isActive %}
+        {% if isOwner %}
+            <div class="container mt-2">
+                <form action="{% url 'closeAuction' id=listing.id %}" method="POST">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">Close Auction</button>
+                </form>
+            </div>
+        {% endif %}
         {% if isListingInWatchlist %}
             <form action="{% url 'removeWatchlist' id=listing.id %}" method="POST">
                 {% csrf_token %}
@@ -37,5 +65,51 @@
       </div>
     </div>
   </div>
-
-{% endblock %}
+  {% if user.is_authenticated %}
+  <div class="container mt-5">
+    <form action="{% url 'addBid' listing.id %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group mb-3">
+        <label for="newBid" class="form-label">Add Bid</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" min="0" class="form-control" name="newBid" placeholder="Add New Bid">
+          <button class="btn btn-primary" type="submit">Add</button>
+        </div>
+    </form>  
+  {% endif %}
+  <div class="row mx-3">
+    <div class="col-12">
+      <h3>Comments</h3>
+    </div>
+  </div>
+  <div class="row mx-3">
+    {% if user.is_authenticated %}
+    <form action="{% url 'addComment' id=listing.id %}" method="POST">
+      {% csrf_token %}
+      <div class="form-group mb-3">
+        <label for="newComment" class="form-label">Add Comment</label>
+        <div class="input-group">
+          <input type="text" class="form-control" id="newComment" name="newComment" placeholder="Add New Comment">
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </div>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+  <br/>
+  <!-- Sección de comentarios -->
+  <div class="row mx-3">
+    <div class="comments-section">
+      <h3>Comments</h3>
+      {% for comment in allComments %}
+        <div class="comment">
+          <p><strong>{{ comment.user.username }}</strong></p>
+          <p>{{ comment.comment }}</p>
+        </div>
+      {% empty %}
+        <p>No comments yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+  {% endblock %}
