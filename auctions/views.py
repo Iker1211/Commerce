@@ -6,6 +6,12 @@ from django.urls import reverse
 
 from .models import User, Category, List, Comment, Bid
 
+def Categories(request):
+    allCategories = Category.objects.all()
+    return render(request, "auctions/categories.html", {
+        "categories": allCategories
+    })
+
 
 def listing(request, id):
     listingData = List.objects.get(pk=id)
