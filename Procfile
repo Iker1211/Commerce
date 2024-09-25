@@ -1,1 +1,1 @@
-web: gunicorn commerce.wsgi
+web: gunicorn commerce.wsgi --bind 0.0.0.0:$PORT
